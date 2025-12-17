@@ -1,23 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+import CaptchaButton from './CaptchaButton';
 
 function App() {
+  const [siteKey, setSiteKey] = useState('');
+  const [activeKey, setActiveKey] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setActiveKey(siteKey); // provider activate
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div style={{ padding: 40 }}>
+      <h2>Enter reCAPTCHA Site Key</h2>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Enter site key"
+          value={siteKey}
+          onChange={(e) => setSiteKey(e.target.value)}
+          style={{ width: 400, padding: 8 }}
+        />
+        <br /><br />
+        <button type="submit">Activate reCAPTCHA</button>
+      </form>
+
+      {activeKey && (
+        <GoogleReCaptchaProvider
+          reCaptchaKey={activeKey}
+          key={activeKey} // 🔑 important: re-mount provider
         >
-          Learn React
-        </a>
-      </header>
+          <CaptchaButton />
+        </GoogleReCaptchaProvider>
+      )}
     </div>
   );
 }
